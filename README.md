@@ -231,7 +231,6 @@ This project helped in understanding:
 **Shubham Vishwakarma**
 
 - GitHub: https://github.com/shubhamvish8108-del
-- LinkedIn: *(Add your LinkedIn profile link here)*
 
 ---
 
