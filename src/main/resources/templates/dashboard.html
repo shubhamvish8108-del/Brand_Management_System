@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Management Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Brand Management System</h1>
+            <a href="/brands/new" class="btn btn-primary">+ Add Brand</a>
+        </header>
+
+        <div th:if="${param.success}" class="alert alert-success" th:text="${param.success}"></div>
+        <div th:if="${param.error}" class="alert alert-error" th:text="${param.error}"></div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Groups</h3>
+                <p class="stat-number" th:text="${totalGroups}">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Chains</h3>
+                <p class="stat-number" th:text="${totalChains}">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Brands</h3>
+                <p class="stat-number" th:text="${totalBrands}">0</p>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h3>Filter Brands</h3>
+            <form method="get" class="filter-form">
+                <div class="filter-group">
+                    <label>By Company:</label>
+                    <select name="filterCompany" onchange="this.form.submit()">
+                        <option value="">-- Select Company --</option>
+                        <option th:each="chain : ${chains}" 
+                                th:value="${chain.companyName}" 
+                                th:text="${chain.companyName}"
+                                th:selected="${filterCompany == chain.companyName}"></option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>By Group:</label>
+                    <select name="filterGroup" onchange="this.form.submit()">
+                        <option value="">-- Select Group --</option>
+                        <option th:each="group : ${groups}" 
+                                th:value="${group.groupName}" 
+                                th:text="${group.groupName}"
+                                th:selected="${filterGroup == group.groupName}"></option>
+                    </select>
+                </div>
+                <a href="/" class="btn btn-secondary">Clear Filters</a>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sr.No</th>
+                        <th>Group</th>
+                        <th>Company</th>
+                        <th>Brand</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="brand, iter : ${brands}" th:class="${!brand.isActive ? 'inactive' : ''}">
+                        <td th:text="${iter.count}">1</td>
+                        <td th:text="${brand.chain.group.groupName}">Group</td>
+                        <td th:text="${brand.chain.companyName}">Company</td>
+                        <td th:text="${brand.brandName}">Brand</td>
+                        <td>
+                            <span class="badge" th:classappend="${brand.isActive ? 'badge-success' : 'badge-danger'}"
+                                  th:text="${brand.isActive ? 'Active' : 'Inactive'}">Active</span>
+                        </td>
+                        <td class="actions">
+                            <a th:href="@{/brands/{id}/edit(id=${brand.brandId})}" class="btn btn-sm btn-edit">Edit</a>
+                            
+                            <form th:if="${brand.isActive}" th:action="@{/brands/{id}/deactivate(id=${brand.brandId})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-warning">Deactivate</button>
+                            </form>
+                            
+                            <form th:if="${!brand.isActive}" th:action="@{/brands/{id}/activate(id=${brand.brandId})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-success">Activate</button>
+                            </form>
+                            
+                            <form th:if="${!brand.isActive}" th:action="@{/brands/{id}/delete(id=${brand.brandId})}" method="post" style="display:inline;"
+                                  onsubmit="return confirm('Delete this brand?')">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(brands)}">
+                        <td colspan="6" class="empty-message">No brands found. Click "Add Brand" to create one!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

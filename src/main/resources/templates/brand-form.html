@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${brand != null} ? 'Edit Brand' : 'Add Brand'">Brand Form</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 th:text="${brand != null} ? 'Edit Brand' : 'Add New Brand'">Brand Form</h1>
+            <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+        </header>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <div class="form-container">
+            <form th:action="${brand != null} ? @{/brands/{id}(id=${brand.brandId})} : @{/brands}" method="post">
+                
+                <div class="form-group">
+                    <label for="brandName">Brand Name *</label>
+                    <input type="text" id="brandName" name="brandName" 
+                           th:value="${brandName != null ? brandName : (brand != null ? brand.brandName : '')}"
+                           placeholder="Enter brand name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="chainId">Select Company *</label>
+                    <select id="chainId" name="chainId" required>
+                        <option value="">-- Select Company --</option>
+                        <option th:each="chain : ${chains}" 
+                                th:value="${chain.chainId}" 
+                                th:text="${chain.companyName}"
+                                th:selected="${brand != null && brand.chain.chainId == chain.chainId}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <a href="/" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary" th:text="${brand != null} ? 'Update Brand' : 'Add Brand'">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
